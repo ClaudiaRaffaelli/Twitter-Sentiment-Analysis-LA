@@ -22,7 +22,12 @@ public class Executor {
     public void computeBatchView(){
         try{
             //The old batch view is saved as the most updated and for the new computation is used the old one
-
+            
+            String [] args={};
+            ToolRunner.run(new BatchDriver(), args);
+            //saving as most updated the just computed batch view
+            databaseManager.saveBatchView();
+            
             //Re-initialization of realtime view table
             for(String keyword: keywords){
                 Put newRow=new Put(Bytes.toBytes(keyword.toString()));
@@ -32,11 +37,6 @@ public class Executor {
 
                 databaseManager.getRealtimeView().put(newRow);
             }
-            String [] args={};
-
-            ToolRunner.run(new BatchDriver(), args);
-            //saving as most updated the just computed batch view
-            databaseManager.saveBatchView();
             //25 second sleep to simulate a long batch computation
             Thread.sleep(25000);
         }catch (Exception e){
